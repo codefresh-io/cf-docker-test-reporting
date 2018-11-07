@@ -104,6 +104,8 @@ describe('Test reporting logic', function () {
     });
 
     describe('Positive', function () {
+        this.timeout(20000);
+
         it('should generate and upload allure report', async function () {
             const initReporter = require('../src/init');
             const result = await initReporter();

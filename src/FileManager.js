@@ -17,20 +17,10 @@ class FileManager {
 
                 console.log('Start upload report files');
 
-                const uploadPromises = files.map((f) => {
-                    const pathToDeploy = this._getFilePathForDeploy({ f, buildId, srcDir, isUploadFile, uploadFile });
+                const uploadPromises = files.map((file) => {
+                    const pathToDeploy = this._getFilePathForDeploy({ file, buildId, srcDir, isUploadFile, uploadFile });
 
-                    return new Promise((resolve, reject) => {
-                        bucket.upload(f, { destination: pathToDeploy }, (err) => {
-                            if (err) {
-                                console.error(`Fail to upload file ${pathToDeploy}, error: `, err.message ? err.message : err);
-                                reject(new Error('Fail to upload file'));
-                            } else {
-                                console.log(`File ${pathToDeploy} successful uploaded`);
-                                resolve(true);
-                            }
-                        });
-                    });
+                    return this._uploadFileWithRetry({ file, pathToDeploy, bucket, retryCount: config.uploadRetryCount });
                 });
 
                 Promise.all(uploadPromises).then(() => {
@@ -41,6 +31,49 @@ You can access it on https://g.codefresh.io/api/testReporting/${buildId}/${proce
             } catch (err) {
                 rej(new Error(`Error while uploading files: ${err.message || 'Unknown error'}`));
             }
+        });
+    }
+
+    static _uploadFileWithRetry({ file, pathToDeploy, bucket, retryCount }) {
+        return new Promise(async (resolve, reject) => {
+            let isUploaded = false;
+            let lastUploadErr;
+
+            for (let i = 0; i < retryCount; i += 1) {
+                if (isUploaded) {
+                    break;
+                }
+
+                try {
+                    await this._uploadFile({ file, pathToDeploy, bucket }); // eslint-disable-line no-await-in-loop
+                    isUploaded = true;
+                } catch (e) {
+                    if (i < retryCount) {
+                        console.log(`Fail to upload file "${pathToDeploy}", retry to upload`);
+                    }
+                    lastUploadErr = e;
+                }
+            }
+
+            if (isUploaded) {
+                console.log(`File ${pathToDeploy} successful uploaded`);
+                resolve(true);
+            } else {
+                console.error(`Fail to upload file ${pathToDeploy}, error: `, lastUploadErr.message ? lastUploadErr.message : lastUploadErr); // eslint-disable-line
+                reject(new Error('Fail to upload file'));
+            }
+        });
+    }
+
+    static _uploadFile({ file, pathToDeploy, bucket }) {
+        return new Promise((resolve, reject) => {
+            bucket.upload(file, { destination: pathToDeploy }, (err) => {
+                if (err) {
+                    reject(new Error(err.message || 'Unknown error during upload file'));
+                } else {
+                    resolve(true);
+                }
+            });
         });
     }
 
@@ -104,9 +137,9 @@ Ensure that "working_directory" was specified for this step and it contains the 
         }
     }
 
-    static _getFilePathForDeploy({ f, buildId, srcDir, isUploadFile, uploadFile }) {
+    static _getFilePathForDeploy({ file, buildId, srcDir, isUploadFile, uploadFile }) {
         if (!isUploadFile) {
-            const pathWithoutSrcDir = f.replace(srcDir, '');
+            const pathWithoutSrcDir = file.replace(srcDir, '');
             return buildId + (pathWithoutSrcDir.startsWith('/') ? pathWithoutSrcDir : `/${pathWithoutSrcDir}`);
         } else {
             return `${buildId}/${path.parse(uploadFile).base}`;
