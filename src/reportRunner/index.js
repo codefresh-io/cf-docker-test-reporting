@@ -5,7 +5,6 @@ const MultiReportRunner = require('./MultiReportRunner');
 const SingleReportRunner = require('./SingleReportRunner');
 const StorageConfigProvider = require('../storageConfig/StorageConfigProvider');
 const Logger = require('../logger');
-const PaymentsLogic = require('../paymentsLogic');
 const AnnotationLogic = require('../annotationLogic');
 const _ = require('lodash');
 
@@ -50,10 +49,9 @@ class Runner {
 
         Runner.validateRequiredVars({ config });
 
-        const uploadMaxSize = await PaymentsLogic.getMaxUploadSizeDependingOnPlan({ config });
         const extractedStorageConfig = await storageConfigProvider.provide({ config });
 
-        return { extractedStorageConfig, uploadMaxSize };
+        return { extractedStorageConfig };
     }
 
     static validateRequiredVars({ config }) {
