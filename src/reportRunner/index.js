@@ -40,6 +40,7 @@ class Runner {
 
             return report;
         } catch (e) {
+            console.error(e.stack);
             console.error(e.message);
             process.exit(1);
         }
