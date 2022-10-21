@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const rp = require('request-promise');
 const VariableResolver = require('../ variableResolver/VariableResolver');
 const storageTypesMap = require('./types');
 const storageTypes = require('./storageTypes');
 const fs = require('fs');
+const CodefreshAPI = require('../api');
 
 class StorageConfigProvider {
     constructor({ config }) {
@@ -29,7 +29,7 @@ class StorageConfigProvider {
         };
 
         try {
-            return await rp(opts);
+            return await CodefreshAPI.sendRequest(config, opts);
         } catch (e) {
             const infoErrMsg = `Can't get storage integration: ${this.integrationName}`;
             if (config.env.logLevel === config.logLevels.DEBUG) {

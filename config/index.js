@@ -109,6 +109,7 @@ class Config {
                 branchNormalized: process.env.CF_BRANCH_TAG_NORMALIZED,
                 storageIntegration: process.env.CF_STORAGE_INTEGRATION,
                 logLevel: logLevelsMap[process.env.REPORT_LOGGING_LEVEL] || INFO,
+                retriesForCodefreshAPI: Number(process.env.CF_API_RETRIES) || 0,
                 sourceReportFolderName: (allureDir || 'allure-results').trim(),
                 reportDir: ((reportDir || '').trim()) || undefined,
                 reportPath: ((reportPath || '').trim()).replace(/\/$/, ''),
