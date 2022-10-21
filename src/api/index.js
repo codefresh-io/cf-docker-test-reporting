@@ -1,20 +1,19 @@
+const _ = require('lodash');
 const rp = require('request-promise');
+const Promise = require('bluebird');
+const retryRequest = require('retry-request');
 
 class CodefreshAPI {
 
     static async sendRequest(config, opts) {
         if (config.env.retriesForCodefreshAPI) {
-            let error;
-            for (let i = 0; i < config.env.retriesForCodefreshAPI; i += 1) {
-                try {
-                    // eslint-disable-next-line no-await-in-loop
-                    const result = await rp(opts);
-                    return result;
-                } catch (e) {
-                    error = e;
-                }
+            opts.retries = config.env.retriesForCodefreshAPI;
+            const response = await Promise.fromCallback(cb => retryRequest(opts, cb));
+            const body = _.get(response, 'body');
+            if (response.statusCode !== 200) {
+                throw new Error(body);
             }
-            throw error;
+            return body;
         }
         return rp(opts);
     }

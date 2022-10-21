@@ -37,6 +37,7 @@
 		"recursive-readdir-sync": "^1.0.6",
 		"request": "^2.88.0",
 		"request-promise": "^4.2.2",
+		"retry-request" : "5.0.2",
 		"rimraf": "^2.7.1"
 	},
 	"devDependencies": {
