@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
-const FIND_VAR_INDEX = /\d{1,2}$/;
-const FIND_VAR_INDEX_WITH_DOT = /\.\d{1,2}$/;
+const FIND_VAR_INDEX = /\d+$/;
+const FIND_VAR_INDEX_WITH_DOT = /\.\d+$/;
 
 class ConfigUtils {
     static buildApiHost() {
@@ -38,7 +38,7 @@ class ConfigUtils {
                 /**
                  * findArrayVar - check if var have number at the end, such variables uses for define array
                  */
-                const findArrayVar = new RegExp(`^${uploadVar}.\\d{1,2}$`);
+                const findArrayVar = new RegExp(`^${uploadVar}.\\d+$`);
 
                 if (findArrayVar.test(envVar)) {
                     const index = envVar.match(FIND_VAR_INDEX)[0];
