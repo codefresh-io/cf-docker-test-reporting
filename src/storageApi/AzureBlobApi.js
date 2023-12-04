@@ -42,7 +42,7 @@ class AzureBlobApi {
 
         while (!blobItem.done) {
             const { value: { name } = {} } = blobItem;
-            const fileName = name.includes('/') ? name.split('/').pop(): name;
+            const fileName = name.split('/').pop();
             const blobClient = containerClient.getBlobClient(name);
             const promise = blobClient.download().then((response) => {
                 return Promise.fromCallback(cb =>
