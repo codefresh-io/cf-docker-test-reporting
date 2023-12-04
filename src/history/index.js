@@ -20,7 +20,7 @@ class History {
             await StorageApi.getApi(state).downloadHistory(Object.assign({}, state, { historyDir: tmpHistoryFullPath }));
             await FileManager.renameDir(tmpHistoryFullPath, `${historyDirBase}/${config.allureHistoryDir}`, { force: true });
 
-            Logger.log('Successfuly add allure history to test results');
+            Logger.log('Successfully add allure history to test results');
         } catch (e) {
             console.error(`Error during adding allure history to test report, cause: ${e.message}`);
         }

@@ -42,10 +42,11 @@ class AzureBlobApi {
 
         while (!blobItem.done) {
             const { value: { name } = {} } = blobItem;
+            const fileName = name.split('/').pop();
             const blobClient = containerClient.getBlobClient(name);
             const promise = blobClient.download().then((response) => {
                 return Promise.fromCallback(cb =>
-                        fs.writeFile(`${historyDir}/${name}`,
+                        fs.writeFile(`${historyDir}/${fileName}`,
                         response.readableStreamBody, { mode: FULL_USER_PERMISSION }, cb));
             });
             promises.push(promise);
