@@ -7,7 +7,15 @@ const ConfigUtils = require('./ConfigUtils');
 /**
  * arrayVars - customer can define array of this vars for upload multiple reports, for example REPORT_DIR.0
  */
-const UPLOAD_ARRAY_VARS = ['REPORT_DIR', 'REPORT_PATH', 'REPORT_INDEX_FILE', 'ALLURE_DIR', 'CLEAR_TEST_REPORT', 'REPORT_TYPE'];
+const UPLOAD_ARRAY_VARS = [
+    'REPORT_DIR',
+    'REPORT_PATH',
+    'REPORT_INDEX_FILE',
+    'ALLURE_DIR',
+    'CLEAR_TEST_REPORT',
+    'REPORT_TYPE',
+    'MAX_UPLOAD_SIZE_MB'
+];
 
 const INFO = 'info';
 const DEBUG = 'debug';
@@ -68,9 +76,11 @@ class Config {
             reportType,
             reportWrapDir,
             reportPath,
+            maxUploadSizeMb
         } = env;
         const apiHost = ConfigUtils.buildApiHost();
         const _reportWrapDir = _.isNumber(reportWrapDir) ? String(reportWrapDir) : '';
+        const _maxUploadSizeMb = _.isNumber(maxUploadSizeMb) ? maxUploadSizeMb : 1000;
         /**
          * field uploadMaxSize set by SingleReportRunner, value in MB
          */
@@ -95,7 +105,7 @@ class Config {
             annotationName: 'cf_test_reporter_link',
             reportsIndexDir: `${path.dirname(require.resolve('../_reportsIndex_'))}`,
             uploadArrayVars: UPLOAD_ARRAY_VARS,
-            maxUploadSize: 1000,
+            maxUploadSize: _maxUploadSizeMb,
             env: {
                 // bucketName - only bucket name, with out subdir path
                 bucketName: ConfigUtils.getBucketName(),
