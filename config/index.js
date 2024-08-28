@@ -82,8 +82,10 @@ class Config {
         } = env;
         const apiHost = ConfigUtils.buildApiHost();
         const _reportWrapDir = _.isNumber(reportWrapDir) ? String(reportWrapDir) : '';
+        const maxUploadSizeMbNumber = parseInt(maxUploadSizeMb, 10);
         console.log('scme maxUploadSizeMb', maxUploadSizeMb);
-        const _maxUploadSizeMb = _.isNumber(maxUploadSizeMb) ? maxUploadSizeMb : 1000;
+        console.log('scme maxUploadSizeMbNumber', maxUploadSizeMbNumber);
+        const _maxUploadSizeMb = _.isNaN(maxUploadSizeMbNumber) ? 1000 : maxUploadSizeMb;
         console.log('scme _maxUploadSizeMb', _maxUploadSizeMb);
         /**
          * field uploadMaxSize set by SingleReportRunner, value in MB
