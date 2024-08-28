@@ -40,6 +40,7 @@ class Config {
 
         UPLOAD_ARRAY_VARS.forEach((uploadVar) => {
             if (process.env[uploadVar]) {
+                console.log('scme single varName', uploadVar, _.camelCase(uploadVar), process.env[uploadVar]);
                 normalisedEnv[_.camelCase(uploadVar)] = process.env[uploadVar];
             }
         });
@@ -54,6 +55,7 @@ class Config {
             const normalisedEnv = {};
 
             Object.keys(env).forEach((varName) => {
+                console.log('scme multi varName', varName, _.camelCase(varName), env[varName]);
                 normalisedEnv[_.camelCase(varName)] = env[varName];
             });
 
@@ -80,7 +82,9 @@ class Config {
         } = env;
         const apiHost = ConfigUtils.buildApiHost();
         const _reportWrapDir = _.isNumber(reportWrapDir) ? String(reportWrapDir) : '';
+        console.log('scme maxUploadSizeMb', maxUploadSizeMb);
         const _maxUploadSizeMb = _.isNumber(maxUploadSizeMb) ? maxUploadSizeMb : 1000;
+        console.log('scme _maxUploadSizeMb', _maxUploadSizeMb);
         /**
          * field uploadMaxSize set by SingleReportRunner, value in MB
          */
