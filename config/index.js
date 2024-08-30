@@ -1,5 +1,3 @@
-'use strict';
-
 const path = require('path');
 const _ = require('lodash');
 const ConfigUtils = require('./ConfigUtils');
@@ -81,7 +79,7 @@ class Config {
         const apiHost = ConfigUtils.buildApiHost();
         const _reportWrapDir = _.isNumber(reportWrapDir) ? String(reportWrapDir) : '';
         const maxUploadSizeMbInteger = parseInt(maxUploadSizeMb, 10);
-        const _maxUploadSizeMb = _.isNaN(maxUploadSizeMbInteger) ? 1000 : maxUploadSizeMb;
+        const _maxUploadSizeMb = _.isNaN(maxUploadSizeMbInteger) ? 1000 : maxUploadSizeMbInteger;
         /**
          * field uploadMaxSize set by SingleReportRunner, value in MB
          */
