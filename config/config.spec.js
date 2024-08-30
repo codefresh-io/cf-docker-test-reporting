@@ -22,47 +22,40 @@ describe('Config', function () {
         process.env = previousEnv;
     });
 
-    it('should set maxUploadSize to value from MAX_UPLOAD_SIZE_MB as number type', async () => {
-        process.env = {
-            ...defaultTestEnv,
-            MAX_UPLOAD_SIZE_MB: '1234567890'
+    const testEnvVar = (varName, outputGetter, input, expected) =>
+        function () {
+            process.env = defaultTestEnv;
+
+            if (input) {
+                process.env[varName] = input;
+            }
+
+            const result = Config.getSingleConfig();
+
+            expect(outputGetter(result)).to.equal(expected);
         };
 
-        const result = Config.getSingleConfig();
+    it('should set maxUploadSize to value from MAX_UPLOAD_SIZE_MB as number type',
+        testEnvVar('MAX_UPLOAD_SIZE_MB', result => result.maxUploadSize, '1234567890', 1234567890));
 
-        expect(result.maxUploadSize).to.equal(1234567890);
-    });
+    it('should set maxUploadSize to 1000 if MAX_UPLOAD_SIZE_MB is not a number',
+        testEnvVar('MAX_UPLOAD_SIZE_MB', result => result.maxUploadSize, 'not-a-number', 1000));
 
-    it('should set maxUploadSize to 1000 if MAX_UPLOAD_SIZE_MB is not a number', async () => {
-        process.env = {
-            ...defaultTestEnv,
-            MAX_UPLOAD_SIZE_MB: 'not-a-number'
-        };
+    it('should set maxUploadSize to 1000 if MAX_UPLOAD_SIZE_MB is not set',
+        testEnvVar('REPORT_INDEX_FILE', result => result.maxUploadSize, 'index.html', 1000));
 
-        const result = Config.getSingleConfig();
+    it('should set maxUploadSize to the rounded down value of MAX_UPLOAD_SIZE_MB if it is not an integer',
+        testEnvVar('MAX_UPLOAD_SIZE_MB', result => result.maxUploadSize, '123.789', 123));
 
-        expect(result.maxUploadSize).to.equal(1000);
-    });
+    it('should set retriesForCodefreshAPI to value from CF_API_RETRIES as number type',
+        testEnvVar('CF_API_RETRIES', result => result.env.retriesForCodefreshAPI, '5', 5));
 
-    it('should set maxUploadSize to 1000 if MAX_UPLOAD_SIZE_MB is not set', async () => {
-        process.env = {
-            ...defaultTestEnv,
-            REPORT_INDEX_FILE: 'index.html',
-        };
+    it('should set retriesForCodefreshAPI to 1000 if CF_API_RETRIES is not a number',
+        testEnvVar('CF_API_RETRIES', result => result.env.retriesForCodefreshAPI, 'not-a-number', 0));
 
-        const result = Config.getSingleConfig();
+    it('should set retriesForCodefreshAPI to 1000 if CF_API_RETRIES is not set',
+        testEnvVar('REPORT_INDEX_FILE', result => result.env.retriesForCodefreshAPI, 'index.html', 0));
 
-        expect(result.maxUploadSize).to.equal(1000);
-    });
-
-    it('should set maxUploadSize to the rounded down value of MAX_UPLOAD_SIZE_MB if it is not an integer', async () => {
-        process.env = {
-            ...defaultTestEnv,
-            MAX_UPLOAD_SIZE_MB: '123.789'
-        };
-
-        const result = Config.getSingleConfig();
-
-        expect(result.maxUploadSize).to.equal(123);
-    });
+    it('should set retriesForCodefreshAPI to the rounded down value of CF_API_RETRIES if it is not an integer',
+        testEnvVar('CF_API_RETRIES', result => result.env.retriesForCodefreshAPI, '123.789', 123));
 });

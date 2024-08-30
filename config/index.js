@@ -12,7 +12,8 @@ const UPLOAD_ARRAY_VARS = [
     'ALLURE_DIR',
     'CLEAR_TEST_REPORT',
     'REPORT_TYPE',
-    'MAX_UPLOAD_SIZE_MB'
+    'MAX_UPLOAD_SIZE_MB',
+    'CF_API_RETRIES'
 ];
 
 const INFO = 'info';
@@ -74,12 +75,13 @@ class Config {
             reportType,
             reportWrapDir,
             reportPath,
-            maxUploadSizeMb
+            maxUploadSizeMb,
+            cfApiRetries
         } = env;
         const apiHost = ConfigUtils.buildApiHost();
         const _reportWrapDir = _.isNumber(reportWrapDir) ? String(reportWrapDir) : '';
-        const maxUploadSizeMbInteger = parseInt(maxUploadSizeMb, 10);
-        const _maxUploadSizeMb = _.isNaN(maxUploadSizeMbInteger) ? 1000 : maxUploadSizeMbInteger;
+        const _maxUploadSizeMb = parseInt(maxUploadSizeMb, 10) || 1000;
+        const _cfApiRetries = parseInt(cfApiRetries, 10) || 0;
         /**
          * field uploadMaxSize set by SingleReportRunner, value in MB
          */
@@ -118,7 +120,7 @@ class Config {
                 branchNormalized: process.env.CF_BRANCH_TAG_NORMALIZED,
                 storageIntegration: process.env.CF_STORAGE_INTEGRATION,
                 logLevel: logLevelsMap[process.env.REPORT_LOGGING_LEVEL] || INFO,
-                retriesForCodefreshAPI: Number(process.env.CF_API_RETRIES) || 0,
+                retriesForCodefreshAPI: _cfApiRetries,
                 sourceReportFolderName: (allureDir || 'allure-results').trim(),
                 reportDir: ((reportDir || '').trim()) || undefined,
                 reportPath: ((reportPath || '').trim()).replace(/\/$/, ''),
