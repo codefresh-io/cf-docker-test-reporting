@@ -91,7 +91,7 @@ describe('Validation', () => {
                 await Vld.validateUploadDir({ config: { ...config, uploadMaxSize: 0.0001 } }, pathToDir);
                 expect.fali(false, false, 'must throw err when dir more than uploadMaxSize');
             } catch (e) {
-                expect(e.message.includes('Directory for upload is to large')).to.equal(true);
+                expect(e.message.includes('Directory for upload is too large')).to.equal(true);
             }
 
             await FileManager.removeResource(pathToDir);
@@ -140,7 +140,7 @@ describe('Validation', () => {
                 });
                 expect.fali(false, false, 'must throw err when file more than uploadMaxSize');
             } catch (e) {
-                expect(e.message.includes('File for upload is to large')).to.equal(true);
+                expect(e.message.includes('File for upload is too large')).to.equal(true);
             }
 
             fs.unlinkSync(pathToFile);
