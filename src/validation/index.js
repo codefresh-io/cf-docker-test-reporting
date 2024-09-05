@@ -14,7 +14,7 @@ class Validator {
         }
 
         if (config.uploadMaxSize < await FileManager.getDirOrFileSize(pathToDir)) {
-            throw new Error(`Error: Directory for upload is to large, max size is ${config.uploadMaxSize} MB`);
+            throw new Error(`Error: Directory for upload is too large, max size is ${config.uploadMaxSize} MB`);
         }
 
         return true;
@@ -30,7 +30,7 @@ class Validator {
         }
 
         if (config.uploadMaxSize < await FileManager.getDirOrFileSize(pathToFile)) {
-            throw new Error(`Error: File for upload is to large, max size is ${config.uploadMaxSize} MB`);
+            throw new Error(`Error: File for upload is too large, max size is ${config.uploadMaxSize} MB`);
         }
 
         return true;

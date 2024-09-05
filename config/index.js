@@ -1,5 +1,3 @@
-'use strict';
-
 const path = require('path');
 const _ = require('lodash');
 const ConfigUtils = require('./ConfigUtils');
@@ -7,7 +5,16 @@ const ConfigUtils = require('./ConfigUtils');
 /**
  * arrayVars - customer can define array of this vars for upload multiple reports, for example REPORT_DIR.0
  */
-const UPLOAD_ARRAY_VARS = ['REPORT_DIR', 'REPORT_PATH', 'REPORT_INDEX_FILE', 'ALLURE_DIR', 'CLEAR_TEST_REPORT', 'REPORT_TYPE'];
+const UPLOAD_ARRAY_VARS = [
+    'REPORT_DIR',
+    'REPORT_PATH',
+    'REPORT_INDEX_FILE',
+    'ALLURE_DIR',
+    'CLEAR_TEST_REPORT',
+    'REPORT_TYPE',
+    'MAX_UPLOAD_SIZE_MB',
+    'CF_API_RETRIES'
+];
 
 const INFO = 'info';
 const DEBUG = 'debug';
@@ -68,9 +75,13 @@ class Config {
             reportType,
             reportWrapDir,
             reportPath,
+            maxUploadSizeMb,
+            cfApiRetries
         } = env;
         const apiHost = ConfigUtils.buildApiHost();
         const _reportWrapDir = _.isNumber(reportWrapDir) ? String(reportWrapDir) : '';
+        const _maxUploadSizeMb = parseInt(maxUploadSizeMb, 10) || 1000;
+        const _cfApiRetries = parseInt(cfApiRetries, 10) || 0;
         /**
          * field uploadMaxSize set by SingleReportRunner, value in MB
          */
@@ -95,7 +106,7 @@ class Config {
             annotationName: 'cf_test_reporter_link',
             reportsIndexDir: `${path.dirname(require.resolve('../_reportsIndex_'))}`,
             uploadArrayVars: UPLOAD_ARRAY_VARS,
-            maxUploadSize: 1000,
+            maxUploadSize: _maxUploadSizeMb,
             env: {
                 // bucketName - only bucket name, with out subdir path
                 bucketName: ConfigUtils.getBucketName(),
@@ -109,7 +120,7 @@ class Config {
                 branchNormalized: process.env.CF_BRANCH_TAG_NORMALIZED,
                 storageIntegration: process.env.CF_STORAGE_INTEGRATION,
                 logLevel: logLevelsMap[process.env.REPORT_LOGGING_LEVEL] || INFO,
-                retriesForCodefreshAPI: Number(process.env.CF_API_RETRIES) || 0,
+                retriesForCodefreshAPI: _cfApiRetries,
                 sourceReportFolderName: (allureDir || 'allure-results').trim(),
                 reportDir: ((reportDir || '').trim()) || undefined,
                 reportPath: ((reportPath || '').trim()).replace(/\/$/, ''),
