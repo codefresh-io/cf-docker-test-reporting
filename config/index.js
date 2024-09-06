@@ -12,8 +12,7 @@ const UPLOAD_ARRAY_VARS = [
     'ALLURE_DIR',
     'CLEAR_TEST_REPORT',
     'REPORT_TYPE',
-    'MAX_UPLOAD_SIZE_MB',
-    'CF_API_RETRIES'
+    'MAX_UPLOAD_SIZE_MB'
 ];
 
 const INFO = 'info';
@@ -75,13 +74,12 @@ class Config {
             reportType,
             reportWrapDir,
             reportPath,
-            maxUploadSizeMb,
-            cfApiRetries
+            maxUploadSizeMb
         } = env;
         const apiHost = ConfigUtils.buildApiHost();
         const _reportWrapDir = _.isNumber(reportWrapDir) ? String(reportWrapDir) : '';
         const _maxUploadSizeMb = parseInt(maxUploadSizeMb, 10) || 1000;
-        const _cfApiRetries = parseInt(cfApiRetries, 10) || 0;
+        const _cfApiRetries = parseInt(process.env.CF_API_RETRIES, 10) || 0;
         /**
          * field uploadMaxSize set by SingleReportRunner, value in MB
          */
